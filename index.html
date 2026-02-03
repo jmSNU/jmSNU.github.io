@@ -129,11 +129,23 @@
         gap: 8px;
         margin-top: 2px;
       }
+
       .authors {
         color: var(--text);
         font-weight: 600;
         flex-wrap: wrap;
+        font-size: 14px;
       }
+      .authors a {
+        color: var(--text);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255,255,255,0.15);
+      }
+      .authors a:hover {
+        text-decoration: none;
+        border-bottom-color: rgba(255,255,255,0.45);
+      }
+
       .affils {
         color: var(--muted);
         font-size: 14px;
@@ -230,6 +242,15 @@
         background: rgba(255, 255, 255, 0.02);
       }
       .figcap {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .imgfail {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 12px;
         color: var(--muted);
         font-size: 13px;
       }
@@ -356,7 +377,14 @@
 
         <div class="meta">
           <div class="authors">
-            Jung Min Lee · Dohyeok Lee · Seokhun Ju · Taehyun Cho · Jin Woo Koo · Li Zhao · Sangwoo Hong · Jungwoo Lee
+            <a href="PASTE_PROFILE_LINK_HERE">Jung Min Lee</a> ·
+            <a href="PASTE_PROFILE_LINK_HERE">Dohyeok Lee</a> ·
+            <a href="PASTE_PROFILE_LINK_HERE">Seokhun Ju</a> ·
+            <a href="PASTE_PROFILE_LINK_HERE">Taehyun Cho</a> ·
+            <a href="PASTE_PROFILE_LINK_HERE">Jin Woo Koo</a> ·
+            <a href="PASTE_PROFILE_LINK_HERE">Li Zhao</a> ·
+            <a href="PASTE_PROFILE_LINK_HERE">Sangwoo Hong</a> ·
+            <a href="PASTE_PROFILE_LINK_HERE">Jungwoo Lee</a>
           </div>
           <div class="affils">
             Seoul National University · Konkuk University · Microsoft Research Asia · HodooAI Labs
@@ -392,6 +420,32 @@
           </p>
 
           <div class="section">
+            <h2 id="introduction">Introduction</h2>
+            <p>
+              Collecting real-world robot demonstrations remains a central bottleneck in training generalist manipulation policies.
+              Unlike foundation models in other domains, robot learning is constrained by the cost of acquiring action-labeled trajectories, which typically requires human teleoperation.
+              This makes large-scale data collection slow and expensive, and the resulting datasets often depend on a specific embodiment and sensor setup.
+              To alleviate this limitation, learning from video has emerged as a promising alternative that exploits abundant human manipulation videos to acquire transferable priors over manipulation-relevant dynamics.
+              A fundamental challenge, however, is that such videos do not provide low-level robot action labels, preventing standard supervised imitation learning.
+            </p>
+            <div class="section">
+              <p>
+                A key obstacle for action-centric latent actions is exogenous noise where visual transitions can be spuriously influenced by factors other than the agent's actions yet still correlate with frame-to-frame changes.
+                Among these factors, we focus on viewpoint variation.
+                Viewpoint changes introduce camera movements and perspective shifts, entangling visual transitions with the agent's action.
+                As a result, latent actions learned from single-view reconstruction can overfit to viewpoint-dependent cues and become less predictive of the actions.
+              </p>
+            </div>
+            <div class="section">
+              <p>
+                We propose Multi-ViewPoint Latent Action Model, which learns discrete latent actions that are highly informative about ground-truth actions.
+                MVP-LAM is trained on time-synchronized multi-view videos with a cross-viewpoint reconstruction objective, where a latent action inferred from one view is used to predict the future observation in another view.
+                This discourages latent actions from encoding the viewpoint-specific information and achieves more action-centric latent actions.
+              </p>
+            </div>
+          </div>
+
+          <div class="section">
             <h2 id="method">Method</h2>
 
             <h3>Action-centric Latent Action</h3>
@@ -399,122 +453,59 @@
               When latent actions are used as pseudo-action labels for behavior cloning policies, it is desirable that the learned latent action $Z_t$ preserves as much information as possible about the underlying action $A_t$.
               We denote the state by $S_t$, and assume an expert policy induces actions $A_t \sim \pi^\star(\cdot \mid S_t)$ for a given task.
               In the pretraining stage, we typically do not observe $S_t$ or $A_t$.
-              Instead, we only observe images (or their features) $O_t = f(I_t)$.
-              LAM produces latent actions from consecutive observations, i.e., $Z_t = E_\theta(O_t, O_{t+1})$ (with vector quantization when using VQ-VAE).
+              Instead, we only observe images or their features $O_t = f(I_t)$.
+              LAM produces latent actions from consecutive observations, $Z_t = E_\\theta(O_t, O_{t+1})$ with vector quantization when using VQ-VAE.
             </p>
 
             <div class="section">
               <p>
-                Motivated by \citet{latentaction_learn}, we define a latent action $Z_t$ <em>action-centric</em> if it is highly informative about the underlying action $A_t$.
+                We define a latent action $Z_t$ action-centric if it is highly informative about the underlying action $A_t$.
                 We quantify this by mutual information and consider the objective
-                $$\max_{Z_t} \ \mathcal{I}(Z_t; A_t).$$
+                $$\\max_{Z_t} \\, \\mathcal{I}(Z_t; A_t).$$
                 In this context, viewpoint variation acts as noise.
                 Changes in camera pose $V_t$ can induce frame-to-frame differences in $O_t$ that are predictive of $Z_t$ but are not caused by the action $A_t$.
-                When $Z_t$ is learned under a limited-capacity bottleneck such as vector quantization, allocating representational capacity to viewpoint-dependent factors can come at the expense of action-relevant dynamics and reduce $\mathcal{I}(Z_t;A_t)$.
-                Under simplifying assumptions detailed in Appendix~\ref{sec:mi_analysis}, one can derive a lower bound
-                $$\mathcal{I}(Z_t;A_t) \ge \mathcal{H}(Z_t) - \mathcal{I}(Z_t;V_t,V_{t+1}\mid S_t,S_{t+1}) - C$$
-                where $C$ is a constant independent of the latent action $Z_t$.
-                This bound suggests that when $\mathcal{H}(Z_t)$ is constrained, decreasing $\mathcal{I}(Z_t;V_t,V_{t+1}\mid S_t,S_{t+1})$ can improve action-centricity.
-                This motivates using time-synchronized multi-view videos together with a cross-viewpoint reconstruction objective to discourage viewpoint-dependent factors in $Z_t$.
+                When $Z_t$ is learned under a limited-capacity bottleneck such as vector quantization, allocating representational capacity to viewpoint-dependent factors can come at the expense of action-relevant dynamics and reduce $\\mathcal{I}(Z_t;A_t)$.
               </p>
             </div>
 
             <h3>Multi-Viewpoint Latent Action Learning</h3>
             <p>
-              Building on this motivation, we introduce MVP-LAM, which leverages time-synchronized multi-view videos and cross-viewpoint reconstruction to learn action-centric latent actions.
-              Although single-view capture is more convenient to collect than multi-view, it remains practical at scale for human videos \cite{tcn}, and various multi-view human datasets are readily available \cite{h2o, havid, assembly101, egoexo4d}.
+              MVP-LAM leverages time-synchronized multi-view videos and cross-viewpoint reconstruction to learn action-centric latent actions.
               For clarity, we describe the two-view case but note that the objective extends to more views.
             </p>
-
           </div>
 
           <div class="section">
             <h2 id="experiments">Experiments</h2>
 
-            <h3> <strong>RQ1.</strong> Are MVP-LAM latent actions more action-centric</h3>
+            <h3><strong>RQ1.</strong> Are MVP-LAM latent actions more action-centric</h3>
             <p>
-              We evaluate how action-centric a latent action is by measuring (i) mutual information between latent actions and ground-truth actions, and (ii) how well actions can be predicted from latent actions with a simple linear layer.
+              We evaluate how action-centric a latent action is by measuring mutual information between latent actions and ground-truth actions, and how well actions can be predicted from latent actions with a simple linear layer.
             </p>
 
             <div class="section">
               <p>
-                On Bridge V2, we estimate $\mathcal{I}(Z;A)$ using three estimators.
-                the nonparametric Kraskov--St\"ogbauer--Grassberger (KSG) estimator, and two variational estimators (Barber--Agakov (BA)~\cite{ba} and a MINE style bound~\cite{mine}).
-                We use $k{=}5$ for KSG.
-                Since KSG is unstable in high dimensions, we apply a random projection to the latent actions so that the overall latent action dimension, including the code length, becomes $d{=}256$ before KSG.
-                We provide details of MI evaluation in Appendix \ref{sec:action_centric_detail}.
+                As shown in the results below, MVP-LAM achieves the highest estimated $\\mathcal{I}(Z;A)$ across estimators.
+                The linear probe also yields lower NMSE on Bridge V2 and on out-of-distribution LIBERO suites Spatial Object Long, with a small drop on LIBERO-Goal relative to UniVLA.
               </p>
             </div>
 
+            <h3><strong>RQ2.</strong> Is MVP-LAM Effective for Manipulation</h3>
             <div class="section">
               <p>
-                As shown in Figure \ref{fig:mi}, MVP-LAM achieves the highest estimated $\mathcal{I}(Z;A)$ across all estimators, suggesting that its latent actions preserve more information about the actions than the baselines.
-                Consistent with MI estimation, Figure \ref{fig:nmse_probe} shows that MVP-LAM achieves lower NMSE on Bridge V2 and on OOD LIBERO suites (Spatial, Object, and Long), with a small drop on LIBERO-Goal relative to UniVLA.
-                Overall, MI estimation and probing consistently indicate that MVP-LAM learns more action-centric latent actions.
-                We note that UniVLA may struggle to achieve action-centricity because its training objective is primarily driven by task information from language descriptions, which are typically trajectory-level, and this provides weaker supervision for encoding step-level action signals in $z_t$.
-                The details of linear probing and extended analysis including LAPA and Moto are listed in Appendix \ref{sec:action_centric_detail}.
+                Pretraining with MVP-LAM latent actions improves downstream manipulation.
+                The average success rate increases from 39.6 percent to 60.4 percent on SIMPLER.
+                On LIBERO-Long, MVP-LAM achieves 90.8 percent success, improving over UniVLA pretrained on Bridge V2 at 79.4 percent.
               </p>
             </div>
 
-            <h3> <strong>RQ2.</strong> Is MVP-LAM Effective for Manipulation</h3>
-
+            <h3><strong>RQ3.</strong> Does MVP-LAM Preserve Transition Information Under Viewpoint Perturbation</h3>
             <div class="section">
               <p>
-                Table~\ref{tab:simpler_res} shows that pretraining with MVP-LAM's latent actions improves downstream manipulation over other baselines.
-                In particular, MVP-LAM increases the average success rate from 39.6\% (UniVLA) to 60.4\%, with gains on all four tasks.
-                While LAPA achieves strong performance on some tasks, MVP-LAM remains competitive overall and yields the best average success rate.
-              </p>
-            </div>
-
-            <div class="section">
-              <p>
-                Table~\ref{tab:libero_res} reports results on LIBERO-Long.
-                MVP-LAM achieves 90.8\% success, improving over UniVLA pretrained on Bridge V2 (79.4\%).
-                It also outperforms OpenVLA and $\pi_0$, and is comparable to UniVLA pretrained on OXE-scale.
-              </p>
-            </div>
-
-            <div class="section">
-              <p>
-                Despite using a substantially smaller robot dataset for VLM pretraining ($\le$60k trajectories) than OXE-scale pretraining (typically $\ge$970k trajectories), MVP-LAM remains competitive on both SIMPLER and LIBERO-Long benchmarks.
-                Notably, LIBERO-Long is used neither for VLM pretraining nor for LAM training, yet MVP-LAM attains a higher success rate.
-                This improvement is consistent with the higher action-centricity of MVP-LAM latent actions (measured on Bridge V2 and LIBERO-Long).
-                These results suggest that more action-centric latent actions provide a stronger pretraining signal and can translate into improved VLA finetuning performance.
-              </p>
-            </div>
-
-            <h3> <strong>RQ3.</strong> Does MVP-LAM Preserve Transition Information Under Viewpoint Perturbation</h3>
-            <div class="section">
-              <p>
-                $$\mathrm{MSE}=\left\lVert o_{t+1}^\text{dino}\! -\! \hat{o}_{t+1}^\text{dino}(z_t) \right\rVert_2^2, \quad
-                \widetilde{\mathrm{MSE}}=\left\lVert o_{t+1}^\text{dino}\! -\! \hat{o}_{t+1}^\text{dino}(\tilde{z}_t) \right\rVert_2^2.$$
-                Concretely, $\mathrm{MSE}$ uses $z_t$ from the original transition, whereas $\widetilde{\mathrm{MSE}}$ uses $\tilde{z}_t$ from the viewpoint-perturbed transition.
-                Since $I_{t+1}$ and $\tilde{I}_{t+1}$ capture the same underlying state under different viewpoints, a larger $\widetilde{\mathrm{MSE}}$ suggests that the latent action is not purely determined by the state transition, but also depends on the viewpoint variation.
-                This corresponds to $Z_t$ retaining more viewpoint-dependent factors beyond $(S_t,S_{t+1})$, which aligns with a larger $\mathcal{I}(Z_t; V_t, V_{t+1} \mid S_t, S_{t+1})$.
-              </p>
-            </div>
-
-            <div class="section">
-              <p>
-                Beyond observation level reconstruction errors, we analyze the action-centricity of latent actions under the viewpoint variations.
-                We report (i) the estimated mutual information $\hat{\mathcal{I}}(\tilde Z; A)$ computed from perturbed latent action $\tilde{Z}$, and (ii) NMSE for a linear probe trained on latent action from the original view and evaluated on latent actions from perturbed views.
-                For MI estimation, we use KSG with same evaluation protocol in Section \ref{sec:mi_eval}, and do so for linear probing.
-              </p>
-            </div>
-
-            <div class="section">
-              <p>
-                As shown in Figure~\ref{fig:nvs_res}, MVP-LAM attains the lowest $\mathrm{MSE}$ on the original sequences, which indicates accurate next observation prediction on unperturbed transitions.
-                It also achieves the lowest $\widetilde{\mathrm{MSE}}$, which suggests that prediction accuracy is largely preserved even when the latent action is inferred from a viewpoint perturbed transition.
-                In addition, MVP-LAM preserves the action centricity signals, with the highest KSG mutual information and the lowest cross view probing error, outperforming all baselines.
-              </p>
-            </div>
-
-            <div class="section">
-              <p>
-                These results support the claim that MVP-LAM preserves transition relevant information under viewpoint perturbations.
-                While the metrics in Figure~\ref{fig:nvs_res} are empirical proxies and do not directly estimate $\mathcal{I}(Z_t;V_t,V_{t+1}\mid S_t,S_{t+1})$, MVP-LAM consistently outperforms the baselines on $\widetilde{\mathrm{MSE}}$ and action-centricity, which is aligned with a reduction of viewpoint dependent information in the inferred latent action.
-                We further provide qualitative and quantitative results for pixel based LAMs, which degrade substantially when conditioning the decoder on latent actions inferred from perturbed transitions, in Appendix~\ref{sec:robust_additional_analysis}.
+                $$\\mathrm{MSE}=\\left\\lVert o_{t+1}^{\\text{dino}}-\\hat{o}_{t+1}^{\\text{dino}}(z_t) \\right\\rVert_2^2, \\quad
+                \\widetilde{\\mathrm{MSE}}=\\left\\lVert o_{t+1}^{\\text{dino}}-\\hat{o}_{t+1}^{\\text{dino}}(\\tilde{z}_t) \\right\\rVert_2^2.$$
+                Concretely, MSE uses $z_t$ from the original transition, whereas $\\widetilde{\\mathrm{MSE}}$ uses $\\tilde{z}_t$ from the viewpoint-perturbed transition.
+                A larger $\\widetilde{\\mathrm{MSE}}$ suggests that the latent action depends on viewpoint variation.
               </p>
             </div>
           </div>
@@ -525,7 +516,7 @@
             <h3>SIMPLER benchmark result</h3>
             <p class="note">
               We report success rate and grasping rate (%) on the SIMPLER benchmark.
-              $\dagger$ denotes results reported in prior work.
+              † denotes results reported in prior work.
               Best is bolded and second best is underlined.
             </p>
 
@@ -536,11 +527,11 @@
                     <th>Success Rate</th>
                     <th>MVP-LAM</th>
                     <th>UniVLA</th>
-                    <th>LAPA$\dagger$</th>
-                    <th>OpenVLA$\dagger$</th>
+                    <th>LAPA†</th>
+                    <th>OpenVLA†</th>
                     <th>Octo-Small</th>
                     <th>Octo-Base</th>
-                    <th>$\pi_{0}$</th>
+                    <th>$\\pi_{0}$</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -657,8 +648,7 @@
             <h3>LIBERO-Long results</h3>
             <p class="note">
               Success rate (%) on LIBERO-Long.
-              $\dagger$ indicates results reported in prior work and $\ast$ indicates the methods that use additional wrist-view images and states.
-              UniVLA (Bridge) uses a Bridge V2–pretrained VLM, while UniVLA (OXE) uses an OXE-pretrained VLM.
+              † indicates results reported in prior work and * indicates methods that use additional wrist-view images and states.
               Best is bolded and second best is underlined.
             </p>
 
@@ -668,9 +658,9 @@
                   <tr>
                     <th>MVP-LAM</th>
                     <th>UniVLA (Bridge)</th>
-                    <th>OpenVLA $\dagger$</th>
-                    <th>$\pi_0$ $\dagger\ast$</th>
-                    <th>UniVLA$\dagger$ (OXE)</th>
+                    <th>OpenVLA †</th>
+                    <th>$\\pi_0$ † *</th>
+                    <th>UniVLA † (OXE)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -704,7 +694,7 @@
           <h2>Figures</h2>
 
           <div class="figure">
-            <img src="assets/concept.png" alt="Concept figure" onerror="this.style.display='none'" />
+            <img data-asset="concept.png" alt="Concept figure" />
             <div class="figcap">
               <strong>Why viewpoint variation interferes with learning latent actions.</strong>
               Viewpoint variation acts as noise.
@@ -715,20 +705,20 @@
           </div>
 
           <div class="figure">
-            <img src="assets/arch.png" alt="Architecture figure" onerror="this.style.display='none'" />
+            <img data-asset="arch.png" alt="Architecture figure" />
             <div class="figcap">
               <strong>MVP-LAM training with time-synchronized multi-view videos.</strong>
               (1) <em>Self-viewpoint reconstruction</em> (left): for each view $v$, frozen DINOv2 extracts features $(o_t^v,o_{t+1}^v)$.
               A spatiotemporal encoder produces a continuous latent $e_t^v$ that is vector-quantized into a discrete token $z_t^v$, and a decoder reconstructs $o_{t+1}^v$ from $(o_t^v,z_t^v)$.
-              (2) <em>Cross-viewpoint reconstruction</em> (right): MVP-LAM swaps latent tokens across views (e.g., $z_t^{v_1}\leftrightarrow z_t^{v_2}$) while reconstructing each view’s future feature, encouraging $z_t$ to capture inherent transition information.
+              (2) <em>Cross-viewpoint reconstruction</em> (right): MVP-LAM swaps latent tokens across views (e.g., $z_t^{v_1}\\leftrightarrow z_t^{v_2}$) while reconstructing each view’s future feature, encouraging $z_t$ to capture inherent transition information.
             </div>
           </div>
 
           <div class="figure">
-            <img src="assets/mi.png" alt="Mutual information figure" onerror="this.style.display='none'" />
+            <img data-asset="mi.png" alt="Mutual information figure" />
             <div class="figcap">
               <strong>Estimated mutual information.</strong>
-              $\mathcal{I}(Z;A)$ on Bridge V2 with KSG, BA, and MINE estimators.
+              $\\mathcal{I}(Z;A)$ on Bridge V2 with KSG, BA, and MINE estimators.
               For KSG, latent actions are randomly projected to $d{=}256$ prior to estimation.
               Higher is better.
               Error bars show standard deviation over four seeds.
@@ -736,7 +726,7 @@
           </div>
 
           <div class="figure">
-            <img src="assets/nmse_bridge_libero_clean_all_oneplot.png" alt="Linear probing figure" onerror="this.style.display='none'" />
+            <img data-asset="nmse_bridge_libero_clean_all_oneplot.png" alt="Linear probing figure" />
             <div class="figcap">
               <strong>Linear probing result.</strong>
               NMSE of a linear layer predicting actions from latent actions.
@@ -747,50 +737,85 @@
           </div>
 
           <div class="figure">
-            <img src="assets/nvs_res_traj.png" alt="Viewpoint perturbed trajectory figure" onerror="this.style.display='none'" />
+            <img data-asset="nvs_res_traj.png" alt="Viewpoint perturbed trajectory figure" />
             <div class="figcap">
               <strong>Viewpoint perturbed trajectory and evaluation.</strong>
-              (Left): an example trajectory from the original camera view $\{I_t\}$ (top) and its viewpoint perturbed counterpart $\{\tilde{I}_t\}$ (bottom).
-              (Right): reconstruction error on the original and perturbed sequences (top), reporting $\mathrm{MSE}$ and $\widetilde{\mathrm{MSE}}$ and action-centricity metrics (bottom), reporting KSG mutual information and NMSE of linear probing, for MVP-LAM and baselines.
+              (Left): an example trajectory from the original camera view $\\{I_t\\}$ (top) and its viewpoint perturbed counterpart $\\{\\tilde{I}_t\\}$ (bottom).
+              (Right): reconstruction error on the original and perturbed sequences (top), reporting $\\mathrm{MSE}$ and $\\widetilde{\\mathrm{MSE}}$ and action-centricity metrics (bottom), reporting KSG mutual information and NMSE of linear probing, for MVP-LAM and baselines.
               Error bars show standard deviation over 3 random seeds.
             </div>
           </div>
 
           <div class="note">
-            Put images in the <code>assets</code> folder with filenames shown above
+            Put images in a folder named <code>assets</code> or <code>asset</code>.
+            Filenames must match exactly.
           </div>
         </aside>
       </div>
+
+      <footer>
+        <div>© <span id="year"></span> MVP-LAM</div>
+        <div>
+          <a class="smalllink" href="https://latentactionpretraining.github.io/">latentactionpretraining.github.io</a>
+        </div>
+      </footer>
     </div>
 
     <script>
       (function () {
         var yearEl = document.getElementById("year");
-        yearEl.textContent = String(new Date().getFullYear());
+        if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
         var copyBtn = document.getElementById("copy-bib");
         var bib = document.getElementById("bibtex-block");
         var status = document.getElementById("copy-status");
 
         function setStatus(msg) {
+          if (!status) return;
           status.textContent = msg;
           setTimeout(function () { status.textContent = ""; }, 1200);
         }
 
-        copyBtn.addEventListener("click", async function () {
-          var text = bib.textContent.trim();
-          try {
-            await navigator.clipboard.writeText(text);
-            setStatus("BibTeX copied");
-          } catch (e) {
-            var ta = document.createElement("textarea");
-            ta.value = text;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand("copy");
-            document.body.removeChild(ta);
-            setStatus("BibTeX copied");
+        if (copyBtn && bib) {
+          copyBtn.addEventListener("click", async function () {
+            var text = bib.textContent.trim();
+            try {
+              await navigator.clipboard.writeText(text);
+              setStatus("BibTeX copied");
+            } catch (e) {
+              var ta = document.createElement("textarea");
+              ta.value = text;
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand("copy");
+              document.body.removeChild(ta);
+              setStatus("BibTeX copied");
+            }
+          });
+        }
+
+        function tryLoad(img, paths, idx) {
+          if (idx >= paths.length) {
+            var box = document.createElement("div");
+            box.className = "imgfail";
+            box.textContent = "Image missing. Expected one of these paths: " + paths.join(" , ");
+            img.replaceWith(box);
+            return;
           }
+          img.src = paths[idx];
+          img.onerror = function () { tryLoad(img, paths, idx + 1); };
+        }
+
+        var imgs = document.querySelectorAll("img[data-asset]");
+        imgs.forEach(function (img) {
+          var name = img.getAttribute("data-asset");
+          var paths = [
+            "assets/" + name,
+            "asset/" + name,
+            "./assets/" + name,
+            "./asset/" + name
+          ];
+          tryLoad(img, paths, 0);
         });
       })();
     </script>
