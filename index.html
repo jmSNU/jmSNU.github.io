@@ -630,15 +630,17 @@
           </p>
 
           <figure class="figure" id="fig-mi">
-            <img data-asset="ac_res.png" alt="Mutual information figure" loading="lazy" />
+            <img data-asset="ac_res.png" alt="Mutual information and NMSE figure" loading="lazy" />
             <figcaption>
-            <strong>Estimated mutual information.</strong>
-            $\mathcal{I}(Z;A)$ on Bridge V2 with KSG, BA, and MINE estimators.
-            For KSG, latent actions are randomly projected to $d{=}256$ prior to estimation.
-            Higher is better.
-            Error bars show standard deviation over four seeds.
+                <strong>Action-centricity on Bridge V2.</strong>
+                Left: estimated mutual information $\mathcal{I}(Z;A)$ with KSG, BA, and MINE estimators.
+                For KSG, latent actions are randomly projected to $d{=}256$ prior to estimation.
+                Right: linear-probe NMSE on Bridge V2.
+                Higher is better for mutual information, and lower is better for NMSE.
+                Error bars show standard deviation over four seeds.
             </figcaption>
           </figure>
+          
           <h3><strong>RQ2.</strong> Is MVP-LAM Effective for Manipulation</h3>
           <p>
             Pretraining with MVP-LAM latent actions improves downstream manipulation.
