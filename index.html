@@ -511,7 +511,7 @@
             <a href="https://cml.snu.ac.kr/">Jungwoo Lee</a>
           </div>
           <div class="affils">
-            Seoul National University · Konkuk University · Microsoft Research Asia · HodooAI Labs
+            Seoul National University · Microsoft Research Asia · Konkuk University ·  HodooAI Labs
           </div>
         </div>
 
@@ -629,31 +629,16 @@
             We evaluate action-centricity by measuring mutual information between latent actions and ground-truth actions, and by predicting actions from latent actions with a linear probe.
           </p>
 
-          <div class="figgrid two" aria-label="RQ1 figures">
-            <figure class="figure" id="fig-mi">
-              <img data-asset="mi.png" alt="Mutual information figure" loading="lazy" />
-              <figcaption>
-                <strong>Estimated mutual information.</strong>
-                $\mathcal{I}(Z;A)$ on Bridge V2 with KSG, BA, and MINE estimators.
-                For KSG, latent actions are randomly projected to $d{=}256$ prior to estimation.
-                Higher is better.
-                Error bars show standard deviation over four seeds.
-              </figcaption>
-            </figure>
-
-            <figure class="figure" id="fig-probe">
-              <img data-asset="linear_probe.png" alt="Linear probing figure" loading="lazy" />
-              <figcaption>
-                <strong>Linear probing result.</strong>
-                NMSE of a linear layer predicting actions from latent actions.
-                Bridge V2 is in-distribution.
-                LIBERO Spatial Object Goal Long are out-of-distribution.
-                Lower is better.
-                Error bars show standard deviation over four seeds.
-              </figcaption>
-            </figure>
-          </div>
-
+          <figure class="figure" id="fig-mi">
+            <img data-asset="ac_res.png" alt="Mutual information figure" loading="lazy" />
+            <figcaption>
+            <strong>Estimated mutual information.</strong>
+            $\mathcal{I}(Z;A)$ on Bridge V2 with KSG, BA, and MINE estimators.
+            For KSG, latent actions are randomly projected to $d{=}256$ prior to estimation.
+            Higher is better.
+            Error bars show standard deviation over four seeds.
+            </figcaption>
+          </figure>
           <h3><strong>RQ2.</strong> Is MVP-LAM Effective for Manipulation</h3>
           <p>
             Pretraining with MVP-LAM latent actions improves downstream manipulation.
@@ -662,169 +647,169 @@
           </p>
         </div>
 
-        <div class="section">
-          <h2>SIMPLER benchmark result</h2>
-          <p class="note">
-            We report success rate and grasping rate (%) on the SIMPLER benchmark.
-            † denotes results reported in prior work.
-            Best is bolded and second best is underlined.
-          </p>
+            <div class="section">
+            <h3>SIMPLER benchmark result</h3>
+            <p class="note">
+                We report success rate and grasping rate (%) on the SIMPLER benchmark.
+                † denotes results reported in prior work.
+                Best is bolded and second best is underlined.
+            </p>
 
-          <div class="tablewrap">
-            <table aria-label="SIMPLER benchmark result table">
-              <thead>
-                <tr>
-                  <th>Success Rate</th>
-                  <th>MVP-LAM</th>
-                  <th>UniVLA</th>
-                  <th>LAPA†</th>
-                  <th>OpenVLA†</th>
-                  <th>Octo-Small</th>
-                  <th>Octo-Base</th>
-                  <th>$\pi_{0}$</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="strong">StackG2Y</td>
-                  <td>33.3</td>
-                  <td>16.7</td>
-                  <td class="strong">54.2</td>
-                  <td class="u">41.6</td>
-                  <td>8.3</td>
-                  <td>0.0</td>
-                  <td>37.5</td>
-                </tr>
-                <tr>
-                  <td class="strong">Carrot2Plate</td>
-                  <td class="strong">66.7</td>
-                  <td>20.8</td>
-                  <td>45.8</td>
-                  <td class="u">50.0</td>
-                  <td>33.3</td>
-                  <td>37.5</td>
-                  <td>33.3</td>
-                </tr>
-                <tr>
-                  <td class="strong">Spoon2Towel</td>
-                  <td class="u">66.7</td>
-                  <td>54.2</td>
-                  <td class="strong">70.8</td>
-                  <td>37.5</td>
-                  <td>25.0</td>
-                  <td>12.5</td>
-                  <td>29.2</td>
-                </tr>
-                <tr>
-                  <td class="strong">Eggplant2Bask</td>
-                  <td class="strong">75.0</td>
-                  <td class="u">66.7</td>
-                  <td>58.3</td>
-                  <td>16.7</td>
-                  <td>12.5</td>
-                  <td>20.8</td>
-                  <td>45.8</td>
-                </tr>
-                <tr>
-                  <td class="strong">AVG</td>
-                  <td class="strong">60.4</td>
-                  <td>39.6</td>
-                  <td class="u">57.3</td>
-                  <td>36.4</td>
-                  <td>19.8</td>
-                  <td>17.7</td>
-                  <td>36.5</td>
-                </tr>
+            <div class="tablewrap">
+                <table aria-label="SIMPLER benchmark result table">
+                <thead>
+                    <tr>
+                    <th>Success Rate</th>
+                    <th>MVP-LAM</th>
+                    <th>UniVLA</th>
+                    <th>LAPA†</th>
+                    <th>OpenVLA†</th>
+                    <th>Octo-Small</th>
+                    <th>Octo-Base</th>
+                    <th>$\pi_{0}$</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td class="strong">StackG2Y</td>
+                    <td>33.3</td>
+                    <td>16.7</td>
+                    <td class="strong">54.2</td>
+                    <td class="u">41.6</td>
+                    <td>8.3</td>
+                    <td>0.0</td>
+                    <td>37.5</td>
+                    </tr>
+                    <tr>
+                    <td class="strong">Carrot2Plate</td>
+                    <td class="strong">66.7</td>
+                    <td>20.8</td>
+                    <td>45.8</td>
+                    <td class="u">50.0</td>
+                    <td>33.3</td>
+                    <td>37.5</td>
+                    <td>33.3</td>
+                    </tr>
+                    <tr>
+                    <td class="strong">Spoon2Towel</td>
+                    <td class="u">66.7</td>
+                    <td>54.2</td>
+                    <td class="strong">70.8</td>
+                    <td>37.5</td>
+                    <td>25.0</td>
+                    <td>12.5</td>
+                    <td>29.2</td>
+                    </tr>
+                    <tr>
+                    <td class="strong">Eggplant2Bask</td>
+                    <td class="strong">75.0</td>
+                    <td class="u">66.7</td>
+                    <td>58.3</td>
+                    <td>16.7</td>
+                    <td>12.5</td>
+                    <td>20.8</td>
+                    <td>45.8</td>
+                    </tr>
+                    <tr>
+                    <td class="strong">AVG</td>
+                    <td class="strong">60.4</td>
+                    <td>39.6</td>
+                    <td class="u">57.3</td>
+                    <td>36.4</td>
+                    <td>19.8</td>
+                    <td>17.7</td>
+                    <td>36.5</td>
+                    </tr>
 
-                <tr>
-                  <th>Grasping Rate</th>
-                  <th colspan="7"></th>
-                </tr>
+                    <tr>
+                    <th>Grasping Rate</th>
+                    <th colspan="7"></th>
+                    </tr>
 
-                <tr>
-                  <td class="strong">StackG2Y</td>
-                  <td>54.3</td>
-                  <td>45.8</td>
-                  <td class="u">62.5</td>
-                  <td>50.0</td>
-                  <td>54.2</td>
-                  <td class="strong">70.8</td>
-                  <td>58.3</td>
-                </tr>
-                <tr>
-                  <td class="strong">Carrot2Plate</td>
-                  <td class="u">70.8</td>
-                  <td>37.5</td>
-                  <td>58.3</td>
-                  <td>66.6</td>
-                  <td class="strong">75.0</td>
-                  <td>54.2</td>
-                  <td>58.3</td>
-                </tr>
-                <tr>
-                  <td class="strong">Spoon2Towel</td>
-                  <td class="u">79.2</td>
-                  <td class="u">79.2</td>
-                  <td class="strong">83.3</td>
-                  <td>45.8</td>
-                  <td>66.7</td>
-                  <td>70.8</td>
-                  <td>54.2</td>
-                </tr>
-                <tr>
-                  <td class="strong">Eggplant2Bask</td>
-                  <td class="u">95.8</td>
-                  <td class="strong">100.0</td>
-                  <td>83.3</td>
-                  <td>37.5</td>
-                  <td>50.0</td>
-                  <td>54.2</td>
-                  <td>87.5</td>
-                </tr>
-                <tr>
-                  <td class="strong">AVG</td>
-                  <td class="strong">75.0</td>
-                  <td>65.6</td>
-                  <td class="u">71.9</td>
-                  <td>50.0</td>
-                  <td>61.5</td>
-                  <td>62.5</td>
-                  <td>64.6</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                    <tr>
+                    <td class="strong">StackG2Y</td>
+                    <td>54.3</td>
+                    <td>45.8</td>
+                    <td class="u">62.5</td>
+                    <td>50.0</td>
+                    <td>54.2</td>
+                    <td class="strong">70.8</td>
+                    <td>58.3</td>
+                    </tr>
+                    <tr>
+                    <td class="strong">Carrot2Plate</td>
+                    <td class="u">70.8</td>
+                    <td>37.5</td>
+                    <td>58.3</td>
+                    <td>66.6</td>
+                    <td class="strong">75.0</td>
+                    <td>54.2</td>
+                    <td>58.3</td>
+                    </tr>
+                    <tr>
+                    <td class="strong">Spoon2Towel</td>
+                    <td class="u">79.2</td>
+                    <td class="u">79.2</td>
+                    <td class="strong">83.3</td>
+                    <td>45.8</td>
+                    <td>66.7</td>
+                    <td>70.8</td>
+                    <td>54.2</td>
+                    </tr>
+                    <tr>
+                    <td class="strong">Eggplant2Bask</td>
+                    <td class="u">95.8</td>
+                    <td class="strong">100.0</td>
+                    <td>83.3</td>
+                    <td>37.5</td>
+                    <td>50.0</td>
+                    <td>54.2</td>
+                    <td>87.5</td>
+                    </tr>
+                    <tr>
+                    <td class="strong">AVG</td>
+                    <td class="strong">75.0</td>
+                    <td>65.6</td>
+                    <td class="u">71.9</td>
+                    <td>50.0</td>
+                    <td>61.5</td>
+                    <td>62.5</td>
+                    <td>64.6</td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
 
-          <h2>LIBERO-Long results</h2>
-          <p class="note">
-            Success rate (%) on LIBERO-Long.
-            † indicates results reported in prior work and * indicates methods that use additional wrist-view images and states.
-            Best is bolded and second best is underlined.
-          </p>
+            <h3>LIBERO-Long results</h3>
+            <p class="note">
+                Success rate (%) on LIBERO-Long.
+                † indicates results reported in prior work and * indicates methods that use additional wrist-view images and states.
+                Best is bolded and second best is underlined.
+            </p>
 
-          <div class="tablewrap">
-            <table aria-label="LIBERO-Long results table">
-              <thead>
-                <tr>
-                  <th>MVP-LAM</th>
-                  <th>UniVLA (Bridge)</th>
-                  <th>OpenVLA †</th>
-                  <th>$\pi_0$ † *</th>
-                  <th>UniVLA † (OXE)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="strong">90.8</td>
-                  <td class="u">79.4</td>
-                  <td>53.7</td>
-                  <td>85.2</td>
-                  <td>92.0</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+            <div class="tablewrap">
+                <table aria-label="LIBERO-Long results table">
+                <thead>
+                    <tr>
+                    <th>MVP-LAM</th>
+                    <th>UniVLA (Bridge)</th>
+                    <th>OpenVLA †</th>
+                    <th>$\pi_0$ † *</th>
+                    <th>UniVLA † (OXE)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td class="strong">90.8</td>
+                    <td class="u">79.4</td>
+                    <td>53.7</td>
+                    <td>85.2</td>
+                    <td>92.0</td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            </div>
 
         <div class="section">
           <h2 id="lam-vis">Visualization of MVP-LAM</h2>
