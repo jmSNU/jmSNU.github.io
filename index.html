@@ -569,14 +569,17 @@
 
           <figure class="figure" id="fig-concept">
             <img data-asset="concept2.png" alt="Concept figure" loading="lazy" />
-            <figcaption>
+          </figure>
+        </div>
+
+        <div class="section">
+            <p>
               Viewpoint variation acts as exogenous noise.
               Because state changes and viewpoint dependent appearance changes are entangled in frame to frame transitions, the same underlying action can induce different visual transitions across viewpoints.
               This confounding makes it difficult to learn latent actions that are consistently predictive of the underlying control actions.
               To mitigate this, MVP-LAM uses time-synchronized multi-view videos and a cross-viewpoint reconstruction objective, which improves the action centricity of the learned latent actions.
               Moreover, pretraining VLAs with these action centric latent actions improves downstream manipulation performance on SIMPLER and LIBERO Long.
-            </figcaption>
-          </figure>
+            </p>
         </div>
 
         <div class="section">
