@@ -588,16 +588,13 @@
           <h3>Multi-Viewpoint Latent Action Learning</h3>
           <p>
             MVP-LAM leverages time-synchronized multi-view videos and cross-viewpoint reconstruction to learn action-centric latent actions.
+            To reduce the effect of viewpoint variation during LAM training, MVP-LAM optimizes two complementary reconstruction terms.
+            First, <strong>self-viewpoint reconstruction</strong> predicts $o_{t+1}^{v}$ from $(o_t^{v}, z_t^{v})$ within the same viewpoint.
+            Second, <strong>cross-viewpoint reconstruction</strong> swaps latent actions across synchronized views and predicts $o_{t+1}^{v}$ from $(o_t^{v}, z_t^{\tilde v})$ for $v \neq \tilde v$.
           </p>
 
           <figure class="figure" id="fig-arch">
             <img data-asset="arch.png" alt="Architecture figure" loading="lazy" />
-            <figcaption>
-              <strong>MVP-LAM training with time-synchronized multi-view videos.</strong>
-              (1) <em>Self-viewpoint reconstruction</em> (left): for each view $v$, frozen DINOv2 extracts features $(o_t^v,o_{t+1}^v)$.
-              A spatiotemporal encoder produces a continuous latent $e_t^v$ that is vector-quantized into a discrete token $z_t^v$, and a decoder reconstructs $o_{t+1}^v$ from $(o_t^v,z_t^v)$.
-              (2) <em>Cross-viewpoint reconstruction</em> (right): MVP-LAM swaps latent tokens across views (e.g., $z_t^{v_1}\leftrightarrow z_t^{v_2}$) while reconstructing each view’s future feature, encouraging $z_t$ to capture inherent transition information.
-            </figcaption>
           </figure>
         </div>
 
@@ -606,20 +603,16 @@
 
           <h3><strong>RQ1.</strong> Are MVP-LAM latent actions more action-centric</h3>
           <p>
-            We evaluate action-centricity by measuring mutual information between latent actions and ground-truth actions, and by predicting actions from latent actions with a linear probe.
+            We evaluate action-centricity using two complementary metrics.
+            First, we estimate mutual information between latent actions and ground-truth actions.
+            Second, we train a linear probe to predict actions from latent actions and report NMSE.
+            MVP-LAM achieves the highest estimated $\mathcal{I}(Z;A)$ across all estimators and the lowest NMSE on Bridge V2, indicating that its latent actions preserve more action-relevant information than the baselines.
           </p>
 
           <figure class="figure" id="fig-mi">
             <img data-asset="ac_res.png" alt="Mutual information and NMSE figure" loading="lazy" />
-            <figcaption>
-                <strong>Action-centricity on Bridge V2.</strong>
-                Left: estimated mutual information $\mathcal{I}(Z;A)$ with KSG, BA, and MINE estimators.
-                For KSG, latent actions are randomly projected to $d{=}256$ prior to estimation.
-                Right: linear-probe NMSE on Bridge V2.
-                Higher is better for mutual information, and lower is better for NMSE.
-                Error bars show standard deviation over four seeds.
-            </figcaption>
           </figure>
+
 
           <h3><strong>RQ2.</strong> Is MVP-LAM Effective for Manipulation</h3>
           <p>
@@ -629,7 +622,7 @@
           </p>
         </div>
 
-            <div class="section">
+        <div class="section">
             <h3>SIMPLER benchmark result</h3>
             <p class="note">
                 We report success rate and grasping rate (%) on the SIMPLER benchmark.
@@ -792,14 +785,23 @@
                 </table>
             </div>
             </div>
+        
+        <div class="section">
+          Despite using a substantially smaller robot dataset for VLM pretraining ($\le$60k trajectories) than OXE-scale pretraining (typically $\ge$970k trajectories), MVP-LAM remains competitive on both SIMPLER and LIBERO-Long benchmarks.
+          Notably, LIBERO-Long is used neither for VLM pretraining nor for LAM training, yet MVP-LAM attains a higher success rate.
+          This improvement is consistent with the higher action-centricity of MVP-LAM latent actions.
+          These results suggest that more action-centric latent actions provide a stronger pretraining signal and can translate into improved VLA finetuning performance.
+        </div>
 
         <div class="section">
           <h2 id="lam-vis">Visualization of MVP-LAM</h2>
+          <p>
+            We visualizes example latent actions produced by MVP-LAM for representative frame transitions.
+            We display the discrete codes selected for each transition, along with the corresponding before/after observations.
+            Across examples from different sources, similar motion patterns tend to activate similar codes, illustrating how MVP-LAM clusters transition dynamics in a shared token space without using action supervision.
+          </p>
           <figure class="figure" id="fig-lam-vis">
             <img data-asset="latent_action_vis.png" alt="lam_vis" loading="lazy" />
-            <figcaption>
-              Qualitative latent action visualization. Example frame transitions and the corresponding MVP-LAM discrete codes selected for each transition.
-            </figcaption>
           </figure>
         </div>
 
