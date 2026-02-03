@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>MVP-LAM | Cross-Viewpoint Reconstruction</title>
+    <meta
+      name="description"
+      content="MVP-LAM learns action-centric discrete latent actions from time-synchronized multi-view videos via cross-viewpoint reconstruction."
+    />
+
+    <meta property="og:title" content="MVP-LAM" />
+    <meta
+      property="og:description"
+      content="Learning Action-Centric Latent Action via Cross-Viewpoint Reconstruction"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://latentactionpretraining.github.io/" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #0b0c10;
+        --panel: #111318;
+        --text: #e9eef5;
+        --muted: #aab4c3;
+        --line: rgba(255, 255, 255, 0.10);
+        --accent: #7aa2ff;
+        --accent2: #a6ffcb;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.40);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(1200px 700px at 20% 0%, rgba(122, 162, 255, 0.22), transparent 60%),
+                    radial-gradient(900px 600px at 85% 15%, rgba(166, 255, 203, 0.12), transparent 55%),
+                    var(--bg);
+        color: var(--text);
+        line-height: 1.55;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      .wrap {
+        width: min(1100px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 28px 0 64px;
+      }
+
+      header {
+        display: grid;
+        gap: 18px;
+        padding: 28px 0 18px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.03);
+        width: fit-content;
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--accent);
+        box-shadow: 0 0 0 6px rgba(122, 162, 255, 0.15);
+      }
+      .badge span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 44px);
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(15px, 2vw, 18px);
+        max-width: 82ch;
+      }
+
+      .meta {
+        display: grid;
+        gap: 10px;
+        margin-top: 6px;
+      }
+      .authors {
+        color: var(--text);
+        font-weight: 600;
+        flex-wrap: wrap;
+      }
+      .affils {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        box-shadow: var(--shadow);
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .btn:hover { background: rgba(255, 255, 255, 0.06); text-decoration: none; }
+      .btn.primary {
+        border-color: rgba(122, 162, 255, 0.50);
+        background: linear-gradient(180deg, rgba(122, 162, 255, 0.20), rgba(122, 162, 255, 0.06));
+      }
+      .btn.disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .btn .pill {
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 12px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 18px;
+        margin-top: 22px;
+      }
+      @media (max-width: 920px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .figure {
+        display: grid;
+        gap: 10px;
+      }
+      .figure img {
+        width: 100%;
+        height: auto;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .figcap {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .section {
+        margin-top: 18px;
+      }
+
+      .kv {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .kv .row {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+      @media (max-width: 560px) {
+        .kv .row { grid-template-columns: 1fr; }
+      }
+      .k {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .v {
+        color: var(--text);
+        font-size: 13px;
+      }
+
+      .bibtex {
+        margin-top: 10px;
+        background: #0a0b0f;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        overflow: auto;
+        font-size: 12px;
+        color: #dfe7ff;
+      }
+
+      footer {
+        margin-top: 24px;
+        color: var(--muted);
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+      }
+
+      .smalllink {
+        color: var(--muted);
+      }
+      .smalllink:hover { color: var(--text); }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0,0,0,0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="badge" aria-label="project status">
+          <div class="dot" aria-hidden="true"></div>
+          <span>ICML 2026 Submission</span>
+        </div>
+
+        <h1>MVP-LAM</h1>
+        <p class="subtitle">
+          Learning Action-Centric Latent Action via Cross-Viewpoint Reconstruction
+        </p>
+
+        <div class="meta">
+          <div class="authors">
+            Jung Min Lee · Dohyeok Lee · Seokhun Ju · Taehyun Cho · Jin Woo Koo · Li Zhao · Sangwoo Hong · Jungwoo Lee
+          </div>
+          <div class="affils">
+            Seoul National University · Konkuk University · Microsoft Research Asia · HodooAI Labs
+          </div>
+        </div>
+
+        <div class="cta" role="group" aria-label="links">
+          <a class="btn primary disabled" href="#" aria-disabled="true" tabindex="-1">
+            <span>arXiv</span>
+            <span class="pill">Coming soon</span>
+          </a>
+          <a class="btn disabled" href="#" aria-disabled="true" tabindex="-1">
+            <span>Code</span>
+            <span class="pill">Coming soon</span>
+          </a>
+          <button class="btn" id="copy-bib" type="button">
+            <span>Copy BibTeX</span>
+            <span class="pill">1 click</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="card">
+          <h2>Abstract</h2>
+          <p>
+            Learning latent actions from diverse human videos enables scaling robot learning beyond embodiment-specific robot datasets, and these latent actions have recently been used as pseudo-action labels for vision-language-action models.
+            We propose Multi-ViewPoint Latent Action Model, which learns discrete latent actions that are highly informative about ground-truth actions from time-synchronized multi-view videos.
+            MVP-LAM trains latent actions with a cross-viewpoint reconstruction objective so that a latent action inferred from one view must explain the future in another view, reducing reliance on viewpoint-specific cues.
+            On Bridge V2, MVP-LAM produces more action-centric latent actions, achieving higher mutual information with ground-truth actions and improved action prediction under out-of-distribution evaluation.
+            Pretraining VLAs with MVP-LAM latent actions improves downstream manipulation performance on SIMPLER and LIBERO-Long.
+          </p>
+
+          <div class="section">
+            <h2>Key idea</h2>
+            <div class="kv">
+              <div class="row">
+                <div class="k">Problem</div>
+                <div class="v">Viewpoint variation confounds visual transitions and degrades action-centricity of latent actions.</div>
+              </div>
+              <div class="row">
+                <div class="k">Approach</div>
+                <div class="v">Cross-viewpoint reconstruction with time-synchronized multi-view videos.</div>
+              </div>
+              <div class="row">
+                <div class="k">Outcome</div>
+                <div class="v">More action-centric discrete latent actions and stronger pseudo-labels for VLA pretraining.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>BibTeX</h2>
+            <pre class="bibtex" id="bibtex" aria-label="bibtex">
+@inproceedings{lee2026mvplam,
+  title     = {MVP-LAM: Learning Action-Centric Latent Action via Cross-Viewpoint Reconstruction},
+  author    = {Lee, Jung Min and Lee, Dohyeok and Ju, Seokhun and Cho, Taehyun and Koo, Jin Woo and Zhao, Li and Hong, Sangwoo and Lee, Jungwoo},
+  booktitle = {International Conference on Machine Learning},
+  year      = {2026},
+  note      = {Under review}
+}
+            </pre>
+            <span class="sr-only" id="copy-status" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Figures</h2>
+          <div class="figure">
+            <img src="assets/concept.png" alt="Concept figure placeholder" onerror="this.style.display='none'" />
+            <div class="figcap">
+              Concept figure. Put your image at <code>assets/concept.png</code>.
+            </div>
+          </div>
+
+          <div class="figure" style="margin-top: 14px;">
+            <img src="assets/arch.png" alt="Architecture figure placeholder" onerror="this.style.display='none'" />
+            <div class="figcap">
+              Architecture figure. Put your image at <code>assets/arch.png</code>.
+            </div>
+          </div>
+
+          <div class="figure" style="margin-top: 14px;">
+            <img src="assets/results.png" alt="Results figure placeholder" onerror="this.style.display='none'" />
+            <div class="figcap">
+              Results overview. Put your image at <code>assets/results.png</code>.
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Contact</h2>
+            <p>
+              Corresponding author. Jungwoo Lee.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div>© <span id="year"></span> MVP-LAM</div>
+        <div>
+          <a class="smalllink" href="https://latentactionpretraining.github.io/">latentactionpretraining.github.io</a>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var yearEl = document.getElementById("year");
+        yearEl.textContent = String(new Date().getFullYear());
+
+        var copyBtn = document.getElementById("copy-bib");
+        var bib = document.getElementById("bibtex");
+        var status = document.getElementById("copy-status");
+
+        function setStatus(msg) {
+          status.textContent = msg;
+          setTimeout(function () { status.textContent = ""; }, 1200);
+        }
+
+        copyBtn.addEventListener("click", async function () {
+          var text = bib.textContent.trim();
+          try {
+            await navigator.clipboard.writeText(text);
+            setStatus("BibTeX copied");
+          } catch (e) {
+            var ta = document.createElement("textarea");
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            setStatus("BibTeX copied");
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
