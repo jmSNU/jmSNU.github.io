@@ -219,8 +219,17 @@
 
       .section { margin-top: 18px; }
 
+      .figgrid {
+        display: grid;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      @media (min-width: 920px) {
+        .figgrid.two { grid-template-columns: 1fr 1fr; }
+      }
+
       figure.figure {
-        margin: 14px 0 0;
+        margin: 0;
         padding: 12px;
         border: 1px solid var(--line);
         border-radius: 14px;
@@ -321,7 +330,7 @@
         width: 1px;
         height: 1px;
         padding: 0;
-        margin: -1px;
+        margin: 0;
         overflow: hidden;
         clip: rect(0,0,0,0);
         white-space: nowrap;
@@ -333,6 +342,89 @@
         font-size: 12px;
         color: #dfe7ff;
       }
+
+    .videogrid {
+    display: grid;
+    gap: 14px;
+    margin-top: 14px;
+    }
+    @media (min-width: 920px) {
+    .videogrid { grid-template-columns: 1fr 1fr; }
+    }
+    .video-card {
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    }
+    .video-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    }
+    .video-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    }
+    .video-tag {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+    }
+    .video-wrap {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.02);
+    }
+    .video-wrap video {
+    width: 100%;
+    height: auto;
+    display: block;
+    }
+    .video-cap {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    }
+    .video-note {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--muted);
+    font-size: 13px;
+    }
+    .video-legend {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    }
+    .video-pill {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    padding: 3px 8px;
+    border-radius: 999px;
+    }
+
+    /* Optional: tighter figure/video spacing on mobile */
+    @media (max-width: 520px) {
+    .video-head { flex-direction: column; align-items: flex-start; }
+    }
+
     </style>
 
     <script>
@@ -359,7 +451,9 @@
             <a href="#method">Method</a>
             <a href="#experiments">Experiments</a>
             <a href="#tables">Tables</a>
+            <a href="#lam-vis">Visualization</a>
             <a href="#bibtex">BibTeX</a>
+            <a href="#rollouts">Rollouts</a>
           </nav>
         </div>
 
@@ -431,7 +525,7 @@
           </div>
 
           <figure class="figure" id="fig-concept">
-            <img data-asset="concept.png" alt="Concept figure" />
+            <img data-asset="concept.png" alt="Concept figure" loading="lazy" />
             <figcaption>
               <strong>Why viewpoint variation interferes with learning latent actions.</strong>
               Viewpoint variation acts as noise.
@@ -480,7 +574,7 @@
           </p>
 
           <figure class="figure" id="fig-arch">
-            <img data-asset="arch.png" alt="Architecture figure" />
+            <img data-asset="arch.png" alt="Architecture figure" loading="lazy" />
             <figcaption>
               <strong>MVP-LAM training with time-synchronized multi-view videos.</strong>
               (1) <em>Self-viewpoint reconstruction</em> (left): for each view $v$, frozen DINOv2 extracts features $(o_t^v,o_{t+1}^v)$.
@@ -498,28 +592,30 @@
             We evaluate action-centricity by measuring mutual information between latent actions and ground-truth actions, and by predicting actions from latent actions with a linear probe.
           </p>
 
-          <figure class="figure" id="fig-mi">
-            <img data-asset="mi.png" alt="Mutual information figure" />
-            <figcaption>
-              <strong>Estimated mutual information.</strong>
-              $\mathcal{I}(Z;A)$ on Bridge V2 with KSG, BA, and MINE estimators.
-              For KSG, latent actions are randomly projected to $d{=}256$ prior to estimation.
-              Higher is better.
-              Error bars show standard deviation over four seeds.
-            </figcaption>
-          </figure>
+          <div class="figgrid two" aria-label="RQ1 figures">
+            <figure class="figure" id="fig-mi">
+              <img data-asset="mi.png" alt="Mutual information figure" loading="lazy" />
+              <figcaption>
+                <strong>Estimated mutual information.</strong>
+                $\mathcal{I}(Z;A)$ on Bridge V2 with KSG, BA, and MINE estimators.
+                For KSG, latent actions are randomly projected to $d{=}256$ prior to estimation.
+                Higher is better.
+                Error bars show standard deviation over four seeds.
+              </figcaption>
+            </figure>
 
-          <figure class="figure" id="fig-probe">
-            <img data-asset="linear_probe.png" alt="Linear probing figure" />
-            <figcaption>
-              <strong>Linear probing result.</strong>
-              NMSE of a linear layer predicting actions from latent actions.
-              Bridge V2 is in-distribution.
-              LIBERO Spatial Object Goal Long are out-of-distribution.
-              Lower is better.
-              Error bars show standard deviation over four seeds.
-            </figcaption>
-          </figure>
+            <figure class="figure" id="fig-probe">
+              <img data-asset="linear_probe.png" alt="Linear probing figure" loading="lazy" />
+              <figcaption>
+                <strong>Linear probing result.</strong>
+                NMSE of a linear layer predicting actions from latent actions.
+                Bridge V2 is in-distribution.
+                LIBERO Spatial Object Goal Long are out-of-distribution.
+                Lower is better.
+                Error bars show standard deviation over four seeds.
+              </figcaption>
+            </figure>
+          </div>
 
           <h3><strong>RQ2.</strong> Is MVP-LAM Effective for Manipulation</h3>
           <p>
@@ -527,26 +623,6 @@
             The average success rate increases from 39.6 percent to 60.4 percent on SIMPLER.
             On LIBERO-Long, MVP-LAM achieves 90.8 percent success, improving over UniVLA pretrained on Bridge V2 at 79.4 percent.
           </p>
-
-          <h3><strong>RQ3.</strong> Does MVP-LAM Preserve Transition Information Under Viewpoint Perturbation</h3>
-          <div class="section">
-            <p>
-              $$\mathrm{MSE}=\left\lVert o_{t+1}^{\mathrm{dino}}-\hat{o}_{t+1}^{\mathrm{dino}}(z_t)\right\rVert_2^2,\quad
-              \widetilde{\mathrm{MSE}}=\left\lVert o_{t+1}^{\mathrm{dino}}-\hat{o}_{t+1}^{\mathrm{dino}}(\tilde{z}_t)\right\rVert_2^2.$$
-              Concretely, MSE uses $z_t$ from the original transition, whereas $\widetilde{\mathrm{MSE}}$ uses $\tilde{z}_t$ from the viewpoint-perturbed transition.
-              A larger $\widetilde{\mathrm{MSE}}$ suggests that the latent action depends on viewpoint variation.
-            </p>
-          </div>
-
-          <figure class="figure" id="fig-nvs">
-            <img data-asset="nvs_res_traj.png" alt="Viewpoint perturbed trajectory figure" />
-            <figcaption>
-              <strong>Viewpoint perturbed trajectory and evaluation.</strong>
-              (Left): an example trajectory from the original camera view $\{I_t\}$ (top) and its viewpoint perturbed counterpart $\{\tilde{I}_t\}$ (bottom).
-              (Right): reconstruction error on the original and perturbed sequences (top), reporting $\mathrm{MSE}$ and $\widetilde{\mathrm{MSE}}$ and action-centricity metrics (bottom), reporting KSG mutual information and NMSE of linear probing, for MVP-LAM and baselines.
-              Error bars show standard deviation over 3 random seeds.
-            </figcaption>
-          </figure>
         </div>
 
         <div class="section">
@@ -713,11 +789,16 @@
               </tbody>
             </table>
           </div>
+        </div>
 
-          <div class="note">
-            Put images in a folder named <code>assets</code> or <code>asset</code>.
-            Filenames must match exactly, including case.
-          </div>
+        <div class="section">
+          <h2 id="lam-vis">Visualization of MVP-LAM</h2>
+          <figure class="figure" id="fig-lam-vis">
+            <img data-asset="latent_action_vis.png" alt="lam_vis" loading="lazy" />
+            <figcaption>
+              Qualitative latent action visualization. Example frame transitions and the corresponding MVP-LAM discrete codes selected for each transition.
+            </figcaption>
+          </figure>
         </div>
 
         <div class="section">
@@ -734,13 +815,274 @@
         </div>
       </main>
 
-      <footer>
-        <div>© <span id="year"></span> MVP-LAM</div>
-        <div>
-          <a class="smalllink" href="https://latentactionpretraining.github.io/">latentactionpretraining.github.io</a>
-        </div>
-      </footer>
     </div>
+
+    <div class="section" id="rollouts">
+    <h2>Rollout videos</h2>
+
+    <p class="note">
+        Place videos under <code>assets/videos/</code>.
+        Use <code>.mp4</code> with H.264 for browser compatibility.
+        Filenames below are templates.
+    </p>
+
+    <div class="video-legend" aria-label="models">
+        <span class="video-pill">mvp-lam</span>
+        <span class="video-pill">univla</span>
+        <span class="video-pill">octo</span>
+        <span class="video-pill">pi0</span>
+    </div>
+
+    <div class="section">
+        <h3>SIMPLER</h3>
+        <h3>StackG2Y</h3>
+        <div class="videogrid">
+        <div class="video-card">
+            <div class="video-head">
+            <p class="video-title">StackG2Y</p>
+            <span class="video-tag">mvp-lam</span>
+            </div>
+            <div class="video-wrap">
+            <video controls preload="metadata" playsinline muted>
+                <source src="assets/videos/simpler/stackg2y/mvp-lam.mp4" type="video/mp4" />
+            </video>
+            </div>
+            <div class="video-cap">SIMPLER rollout. Task StackG2Y. Model mvp-lam.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head">
+            <p class="video-title">StackG2Y</p>
+            <span class="video-tag">univla</span>
+            </div>
+            <div class="video-wrap">
+            <video controls preload="metadata" playsinline muted>
+                <source src="assets/videos/simpler/stackg2y/univla.mp4" type="video/mp4" />
+            </video>
+            </div>
+            <div class="video-cap">SIMPLER rollout. Task StackG2Y. Model univla.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head">
+            <p class="video-title">StackG2Y</p>
+            <span class="video-tag">octo</span>
+            </div>
+            <div class="video-wrap">
+            <video controls preload="metadata" playsinline muted>
+                <source src="assets/videos/simpler/stackg2y/octo.mp4" type="video/mp4" />
+            </video>
+            </div>
+            <div class="video-cap">SIMPLER rollout. Task StackG2Y. Model octo.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head">
+            <p class="video-title">StackG2Y</p>
+            <span class="video-tag">pi0</span>
+            </div>
+            <div class="video-wrap">
+            <video controls preload="metadata" playsinline muted>
+                <source src="assets/videos/simpler/stackg2y/pi0.mp4" type="video/mp4" />
+            </video>
+            </div>
+            <div class="video-cap">SIMPLER rollout. Task StackG2Y. Model pi0.</div>
+        </div>
+        </div>
+
+        <!-- Task 2 -->
+        <h3>Carrot2Plate</h3>
+        <div class="videogrid">
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Carrot2Plate</p><span class="video-tag">mvp-lam</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/carrot2plate/mvp-lam.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Carrot2Plate. Model mvp-lam.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Carrot2Plate</p><span class="video-tag">univla</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/carrot2plate/univla.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Carrot2Plate. Model univla.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Carrot2Plate</p><span class="video-tag">octo</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/carrot2plate/octo.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Carrot2Plate. Model octo.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Carrot2Plate</p><span class="video-tag">pi0</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/carrot2plate/pi0.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Carrot2Plate. Model pi0.</div>
+        </div>
+        </div>
+
+        <!-- Task 3 -->
+        <h3>Spoon2Towel</h3>
+        <div class="videogrid">
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Spoon2Towel</p><span class="video-tag">mvp-lam</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/spoon2towel/mvp-lam.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Spoon2Towel. Model mvp-lam.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Spoon2Towel</p><span class="video-tag">univla</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/spoon2towel/univla.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Spoon2Towel. Model univla.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Spoon2Towel</p><span class="video-tag">octo</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/spoon2towel/octo.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Spoon2Towel. Model octo.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Spoon2Towel</p><span class="video-tag">pi0</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/spoon2towel/pi0.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Spoon2Towel. Model pi0.</div>
+        </div>
+        </div>
+
+        <!-- Task 4 -->
+        <h3>Eggplant2Bask</h3>
+        <div class="videogrid">
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Eggplant2Bask</p><span class="video-tag">mvp-lam</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/eggplant2bask/mvp-lam.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Eggplant2Bask. Model mvp-lam.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Eggplant2Bask</p><span class="video-tag">univla</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/eggplant2bask/univla.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Eggplant2Bask. Model univla.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Eggplant2Bask</p><span class="video-tag">octo</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/eggplant2bask/octo.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Eggplant2Bask. Model octo.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">Eggplant2Bask</p><span class="video-tag">pi0</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/simpler/eggplant2bask/pi0.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">SIMPLER rollout. Task Eggplant2Bask. Model pi0.</div>
+        </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>LIBERO-Long</h3>
+        <p class="note">
+        Add 2 to 3 example rollouts.
+        You can keep the naming consistent with SIMPLER.
+        Replace <code>example_1</code> etc. with your preferred identifiers.
+        </p>
+
+        <h3>Put the white mug on the left plate and put the yellow and white mug on the right plate</h3>
+        <div class="videogrid">
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">LIBERO example 1</p><span class="video-tag">mvp-lam</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/libero/example_1/mvp-lam.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">LIBERO-Long rollout. Example 1. Model mvp-lam.</div>
+        </div>
+
+        <!-- <div class="video-card">
+            <div class="video-head"><p class="video-title">LIBERO example 1</p><span class="video-tag">univla</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/libero/example_1/univla.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">LIBERO-Long rollout. Example 1. Model univla.</div>
+        </div> -->
+        </div>
+
+        <h3>Put both moka pots on the stove</h3>
+        <div class="videogrid">
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">LIBERO example 2</p><span class="video-tag">mvp-lam</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/libero/example_2/mvp-lam.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">LIBERO-Long rollout. Example 2. Model mvp-lam.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">LIBERO example 2</p><span class="video-tag">univla</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/libero/example_2/univla.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">LIBERO-Long rollout. Example 2. Model univla.</div>
+        </div>
+
+        <!-- <div class="video-card">
+            <div class="video-head"><p class="video-title">LIBERO example 2</p><span class="video-tag">pi0</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/libero/example_2/pi0.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">LIBERO-Long rollout. Example 2. Model pi0.</div>
+        </div> -->
+        </div>
+
+        <h3>Put the yellow and white mug in the microwave and close it</h3>
+        <div class="videogrid">
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">LIBERO example 2</p><span class="video-tag">mvp-lam</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/libero/example_3/mvp-lam.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">LIBERO-Long rollout. Example 2. Model mvp-lam.</div>
+        </div>
+
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">LIBERO example 2</p><span class="video-tag">univla</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/libero/example_3/univla.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">LIBERO-Long rollout. Example 2. Model univla.</div>
+        </div>
+<!-- 
+        <div class="video-card">
+            <div class="video-head"><p class="video-title">LIBERO example 2</p><span class="video-tag">pi0</span></div>
+            <div class="video-wrap"><video controls preload="metadata" playsinline muted>
+            <source src="assets/videos/libero/example_3/pi0.mp4" type="video/mp4" />
+            </video></div>
+            <div class="video-cap">LIBERO-Long rollout. Example 2. Model pi0.</div>
+        </div> -->
+        </div>
+
+    </div>
+    </div>
+
 
     <script>
       (function () {
