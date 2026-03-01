@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="description"
@@ -7,7 +7,7 @@
   <meta name="keywords" content="Latent Action, VLA, Robot Learning, Multi-View, Cross-Viewpoint Reconstruction">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MVP-LAM | Cross-Viewpoint Reconstruction</title>
+  <title>MVP-LAM: Learning Action-Centric Latent Action via Cross-Viewpoint Reconstruction</title>
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
 
@@ -18,14 +18,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
 
-  <link rel="icon" href="./static/images/favicon.svg">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
-
   <script>
     window.MathJax = {
       tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] },
@@ -33,29 +25,15 @@
     };
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
 </head>
 
 <body>
-
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-
-  <div id="navbarMain" class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="#abstract">Abstract</a>
-      <a class="navbar-item" href="#method">Method</a>
-      <a class="navbar-item" href="#experiments">Experiments</a>
-      <a class="navbar-item" href="#rollouts">Rollouts</a>
-      <a class="navbar-item" href="#bibtex">BibTeX</a>
-    </div>
-  </div>
-</nav>
 
 <section class="hero">
   <div class="hero-body">
@@ -63,42 +41,45 @@
       <div class="columns is-centered">
         <div class="column has-text-centered">
 
-          <h1 class="title is-1 publication-title">MVP-LAM</h1>
-          <div class="is-size-5 publication-authors">
+          <h1 class="title is-1 publication-title">
+            MVP-LAM: Learning Action-Centric Latent Action via Cross-Viewpoint Reconstruction
+          </h1>
+
+          <div class="is-size-5 publication-authors" style="margin-top: 0.5rem;">
             <span class="author-block">
-              <a href="https://tiny-gander-c11.notion.site/Jung-Min-Lee-709b80feb6c84a7281e46f1070920e5e">Jung Min Lee</a>,
+              <a href="https://tiny-gander-c11.notion.site/Jung-Min-Lee-709b80feb6c84a7281e46f1070920e5e">Jung Min Lee</a>,<sup>1</sup>
             </span>
             <span class="author-block">
-              <a href="https://dohyeoklee.github.io/">Dohyeok Lee</a>,
+              <a href="https://dohyeoklee.github.io/">Dohyeok Lee</a>,<sup>1</sup>
             </span>
             <span class="author-block">
-              <a href="https://jmsnu.github.io/#">Seokhun Ju</a>,
+              <a href="https://jmsnu.github.io/#">Seokhun Ju</a>,<sup>1</sup>
             </span>
             <span class="author-block">
-              <a href="https://talium0713.github.io/">Taehyun Cho</a>,
+              <a href="https://talium0713.github.io/">Taehyun Cho</a>,<sup>1</sup>
             </span>
             <span class="author-block">
-              <a href="https://jmsnu.github.io/#">Jin Woo Koo</a>,
+              <a href="https://jmsnu.github.io/#">Jin Woo Koo</a>,<sup>1</sup>
             </span>
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?user=b-LJkLQAAAAJ&hl=en">Li Zhao</a>,
+              <a href="https://scholar.google.com/citations?user=b-LJkLQAAAAJ&hl=en">Li Zhao</a>,<sup>2</sup>
             </span>
             <span class="author-block">
-              <a href="https://sangwoohong.github.io/">Sangwoo Hong</a>,
+              <a href="https://sangwoohong.github.io/">Sangwoo Hong</a>,<sup>3</sup>
             </span>
             <span class="author-block">
-              <a href="https://cml.snu.ac.kr/">Jungwoo Lee</a>
+              <a href="https://cml.snu.ac.kr/">Jungwoo Lee</a>,<sup>1,4</sup>
             </span>
           </div>
 
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">Seoul National University</span>
-            <span class="author-block">Microsoft Research Asia</span>
-            <span class="author-block">Konkuk University</span>
-            <span class="author-block">HodooAI Labs</span>
+          <div class="is-size-5 publication-authors" style="margin-top: 0.35rem;">
+            <span class="author-block">Seoul National University, Seoul, South Korea,<sup>1</sup></span>
+            <span class="author-block">Microsoft Research Asia, Beijing, China,<sup>2</sup></span>
+            <span class="author-block">Konkuk University, Seoul, South Korea,<sup>3</sup></span>
+            <span class="author-block">HodooAI Labs, Seoul, South Korea,<sup>4</sup></span>
           </div>
 
-          <div class="column has-text-centered">
+          <div class="column has-text-centered" style="margin-top: 0.75rem;">
             <div class="publication-links">
 
               <span class="link-block">
@@ -110,7 +91,7 @@
               </span>
 
               <span class="link-block">
-                <a href="https://arxiv.org/pdf/2602.03668.pdf"
+                <a href="https://arxiv.org/abs/2602.03668"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fas fa-file-pdf"></i></span>
                   <span>Paper</span>
@@ -128,44 +109,7 @@
             </div>
           </div>
 
-          <p class="is-size-5" style="margin-top: 0.5rem;">
-            Learning Action-Centric Latent Action via Cross-Viewpoint Reconstruction
-          </p>
-
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <img src="./assets/concept2.png" alt="Concept figure" style="width: 100%; height: auto;">
-      <h2 class="subtitle has-text-centered" style="margin-top: 0.75rem;">
-        Cross-viewpoint reconstruction trains a latent action inferred from one view to explain the future in another view.
-      </h2>
-    </div>
-  </div>
-</section>
-
-<section class="hero is-light is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-
-        <div class="item">
-          <img src="./assets/arch.png" alt="Architecture figure">
-        </div>
-
-        <div class="item">
-          <img src="./assets/ac_res.png" alt="Mutual information and NMSE figure">
-        </div>
-
-        <div class="item">
-          <img src="./assets/latent_action_vis.png" alt="Latent action visualization">
-        </div>
-
       </div>
     </div>
   </div>
@@ -173,23 +117,24 @@
 
 <section class="section" id="abstract">
   <div class="container is-max-desktop">
-
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Learning latent actions from diverse human videos enables scaling robot learning beyond embodiment-specific robot datasets, and these latent actions have been used as pseudo-action labels for VLA model pretraining.
+            Learning <em>latent actions</em> from diverse human videos enables scaling robot learning beyond embodiment-specific robot datasets,
+            and these latent actions have been used as pseudo-action labels for vision-language-action (VLA) model pretraining.
             To make VLA pretraining effective, latent actions should contain information about the underlying agent actions despite missing ground-truth labels.
             We propose Multi-ViewPoint Latent Action Model (MVP-LAM), which learns discrete latent actions from time-synchronized multi-view videos.
-            MVP-LAM trains latent actions with a cross-viewpoint reconstruction objective so that a latent action inferred from one view must explain the future in another view, reducing reliance on viewpoint-specific cues.
-            On Bridge V2, MVP-LAM improves action-centricity, achieving higher mutual information with ground-truth actions and improved action prediction, including under out-of-distribution evaluation.
-            Pretraining VLAs with MVP-LAM latent actions improves downstream manipulation performance on SIMPLER and LIBERO-Long.
+            MVP-LAM trains latent actions with a cross-viewpoint reconstruction objective so that a latent action inferred from one view must explain the future in another view,
+            reducing reliance on viewpoint-specific cues.
+            On Bridge V2, MVP-LAM improves action-centricity, achieving higher mutual information with ground-truth actions and improved action prediction,
+            including under out-of-distribution evaluation.
+            Pretraining VLAs with MVP-LAM latent actions improves downstream manipulation performance on the SIMPLER and LIBERO-Long benchmarks.
           </p>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -201,10 +146,9 @@
 
         <div class="content has-text-justified">
           <p>
-            MVP-LAM leverages time-synchronized multi-view videos and cross-viewpoint reconstruction to learn action-centric latent actions.
-            It optimizes two complementary terms.
+            MVP-LAM learns action-centric latent actions by training on time-synchronized multi-view videos with a cross-viewpoint reconstruction objective.
             Self-viewpoint reconstruction predicts $o_{t+1}^{v}$ from $(o_t^{v}, z_t^{v})$.
-            Cross-viewpoint reconstruction swaps latent actions across synchronized views and predicts $o_{t+1}^{v}$ from $(o_t^{v}, z_t^{\\tilde v})$ for $v \\neq \\tilde v$.
+            Cross-viewpoint reconstruction swaps latent actions across synchronized views and predicts $o_{t+1}^{v}$ from $(o_t^{v}, z_t^{\tilde v})$ for $v \neq \tilde v$.
           </p>
         </div>
 
@@ -230,6 +174,7 @@
             MVP-LAM achieves the highest estimated $\\mathcal{I}(Z;A)$ across estimators and the lowest NMSE on Bridge V2.
           </p>
         </div>
+
         <div class="content has-text-centered">
           <img src="./assets/ac_res.png" alt="Mutual information and NMSE figure" style="max-width: 100%; height: auto;">
         </div>
@@ -646,13 +591,19 @@
 
 <footer class="footer">
   <div class="container">
-    <div class="content has-text-centered">
-      <a class="icon-link" href="https://arxiv.org/pdf/2602.03668.pdf">
-        <i class="fas fa-file-pdf"></i>
-      </a>
-      <a class="icon-link" href="https://arxiv.org/abs/2602.03668">
-        <i class="ai ai-arxiv"></i>
-      </a>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-justified">
+          <p>
+            This website is based on the <a href="https://github.com/nerfies/nerfies.github.io">nerfies template</a>,
+            which is licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            Please remove any analytics code you do not want on your website.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </footer>
